@@ -7,16 +7,27 @@
 	<link href="https://fonts.googleapis.com/css?family=Alex+Brush" rel="stylesheet"> 
 	<link href="https://fonts.googleapis.com/css?family=Pacifico" rel="stylesheet"> 
 	<style>
+		*{
+			margin: 0;
+			padding: 0;
+		}
 		@keyframes heartBeat {
-		    0%  {
+		    0%, 100%   {
 	    		transform: scale(1);
 	    	}
 		    50%  {
 		    	transform: scale(1.1);
 		    }
-		    100%  {
-	    		transform: scale(1);
-	    	}
+		}
+
+		@keyframes heartZoomIn {
+			from {width: 0px;}
+			to {width: 150px;}
+		}
+
+		@keyframes heartZoomOut {
+			from {width: 150px;}
+			to {width: 0px;}
 		}
 
 		h1 {
@@ -37,20 +48,48 @@
 			transform: translate(-50%,-50%);
 		}
 
-		#love {
+		.love.zoom-in {
+			animation:  heartBeat 2s infinite,
+						heartZoomIn 1s 1 forwards;
+		}
+
+		.love.zoom-out {
+			animation:  heartBeat 2s infinite,
+						heartZoomOut 1s 1 forwards;
+		}
+
+		.love {
 			width: 150px;
 			cursor: pointer;
-			transform: translate(-75px,-50%);
+			transform: translate(-50%,-50%);
 			margin: auto;
  		 	position: absolute;
   			top: 0; left: 0; bottom: 0; right: 0;
+			animation: heartBeat 2s infinite;
+			transform :rotate(180deg);
 		}
 
+		.container {
+			position: fixed;
+			height: 100%;
+			width: 100%;
+		}	
 
-		#love.animated {
-			animation-name: heartBeat;
-	    	animation-duration: 2s;
-	    	animation-iteration-count: infinite;
+		.flipper {
+			top: 25%;
+			height: 100%;
+			transform: translateY(-12.5%);
+			position: relative;
+		}
+
+		.front, .back {
+			position: absolute;
+
+			top:0;
+			left: 0;
+		}
+		.img {
+			width: 100%;
 		}
 
 	</style>
@@ -63,30 +102,57 @@
 	<audio controls autoplay style="display: none;">
   		<source src="Ed Sheeran - Tenerife Sea.mp3" type="audio/mpeg">
   	</audio> 
-
-	<img id="love" class="animated" src="love.png"/>
+  	<img id="img" class="img" src="1.jpg"/>
+	<img id="ava" class="love img" style="z-index: 99; width:0px;" src="NAD.png"/>
+	<img id="heartBeat" class="love" width="20px" src="love.png"/>
 	<img id="heart" src="love.png"/>
-	<table id="tb">
-		<tr>
-			<td id="greeting" style="display: none;"><h1 style="font-size: 38px;">Happy Valentine</h1></td>
-		</tr>
-		<tr>
-			<td>
-			</td>
-		</tr>
-		<tr>
-			<td id="name" style="display: none;"><h1>Naditha Maharani</h1></td>
-		</tr>
-	</table>
 	
+	
+
 	<script type="text/javascript">
-		var love = document.getElementById("love"),
+		var ava = document.getElementById("ava"),
+			heartBeat = document.getElementById("heartBeat"),
 			heart = document.getElementById("heart");
-		love.onclick = function(){
-			heart.style.width = "300%";
-			love.src="NAD.png";
+
+		function toggleLove(){
+			if(heart.style.width=="300%"){
+				heart.style.width = "150px";
+				setTimeout(function(){
+					ava.classList.remove("zoom-in");
+					ava.classList.add("zoom-out");
+				}, 150);
+			} else {
+				ava.classList.remove("zoom-out");
+				ava.classList.add("zoom-in");
+				setTimeout(function(){heart.style.width = "300%";}, 150);
+			}
+		}
+		heartBeat.onclick = function(){
+			toggleLove();
 		}
 
+		ava.onclick = function(){
+			toggleLove();
+		}
+		var listImgs = ['1.jpg','2.jpg','3.jpg','4.jpg','5.jpg','6.jpg'];
+		var i = 0;
+		function flip(){
+			var val = '0';
+			if(i%2) val = '180'
+			var index = i%6;
+			var aa = document.getElementById("img");
+				aa.style.transition = '1s';
+				aa.style.transform = 'rotateY('+ val +'deg)';
+			setTimeout(function(){
+				aa.src = listImgs[index];
+			}, 250);
+			setTimeout(function(){
+				flip();
+			}, 4000);
+			i++;
+		}
+
+		flip();
 		
 	</script>
 </body>
